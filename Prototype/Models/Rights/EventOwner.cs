@@ -1,6 +1,6 @@
 ﻿namespace Prototype.Models.Rights;
 
-public class EventOwner
+public class EventOwner : Rights
 {
     
 }

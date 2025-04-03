@@ -1,6 +1,6 @@
 ﻿namespace Prototype.Models.Rights;
 
-public class Administrator
+public class Administrator : Rights
 {
     
 }

@@ -1,6 +1,6 @@
 ﻿namespace Prototype.Models.Rights;
 
-public class Organizer
+public class Organizer : Rights
 {
     
 }

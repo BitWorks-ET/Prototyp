@@ -1,6 +1,6 @@
 ﻿namespace Prototype.Models.Rights;
 
-public class Member
+public class Member : Rights
 {
     
 }
