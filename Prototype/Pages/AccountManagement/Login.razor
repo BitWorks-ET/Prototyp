@@ -1,6 +1,23 @@
-﻿<h3>Login</h3>
-<p>Hello World</p>
+﻿@page "/Login"
+
+<PageTitle>User Log In</PageTitle>
+
+<h3>Login</h3>
+<p>Melden Sie sich mit einem existierenden Benutzer an, oder erstellen Sie einen neuen Account</p>
+
+<label for="nameOrMail">Name oder E-Mail:</label>
+<InputText id="nameOrMail" @bind-Value="userName" class="form-control"/>
+<label for="password">Passwort:</label>
+<InputText id="password" type="password" @bind-Value="password" class="form-control" />
+<button>Anmelden</button>
+<p>Noch keinen Account?:</p>
+<NavLink href="/Register" class="btn btn-primary">
+    Neuen Account erstellen
+</NavLink>
+<p>Eingegebener Username: @userName</p>
+
 
 @code {
-
+    private String? userName;
+    private String? password;
 }
