@@ -1,6 +1,18 @@
-﻿<h3>Login</h3>
-<p>Hello World</p>
+﻿@page "/Login"
+
+<PageTitle>User Log In</PageTitle>
+
+<h3>Login</h3>
+<p>Melden Sie sich mit einem existierenden Benutzer an, oder erstellen Sie einen neuen Account</p>
+<InputText @bind-Value="userName" placeholder="Name oder E-Mail" class="form-control"/>
+<InputText type="password" @bind-Value="password" placeholder="Passwort" class="form-control" />
+<button>Anmelden</button>
+<p>Noch keinen Account?:</p>
+<p>Eingegebener Username: @userName</p>
+<button>Registrieren</button>
+
 
 @code {
-
+    private String userName;
+    private String password;
 }
