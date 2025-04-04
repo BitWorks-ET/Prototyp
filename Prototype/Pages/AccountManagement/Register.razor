@@ -16,6 +16,16 @@
 <InputText id="repeatPassword" type="password" @bind-Value="repeatedPassword" class="form-control" />
 <button @onclick="validateAndNavigate">Registrieren</button>
 
+@if (popupVisible)
+{
+    <div class="popup-overlay bg-danger bg-opacity-10">
+        <div class="popup-box">
+            <p>Bitte geben Sie alle relevanten Daten für eine Registrierung ein</p>
+            <button @onclick="() => popupVisible = false">Schließen</button>
+        </div>
+    </div>
+}
+
 
 @code {
     private string? userName;
@@ -24,15 +34,17 @@
     private string? password;
     private string? repeatedPassword;
 
+    private bool popupVisible = false;
+
     private void validateAndNavigate()
     {
-        if(this.password == this.repeatedPassword)
+        if(this.password == this.repeatedPassword && userName != null && eMail != null && birthday != null && password != null)
         {
             Navigation.NavigateTo("/");
         }
         else
         {
-            
+            popupVisible = true;
         }
     }
 }
