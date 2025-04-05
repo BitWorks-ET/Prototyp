@@ -1,8 +1,12 @@
 ﻿@page "/"
 
+@using Blazored.SessionStorage
 @using Prototype.HelperClasses
-
+@using Prototype.Models
 @inject NavigationManager Navigation
+@inject ISessionStorageService SessionStorage
+
+
 
 <PageTitle>Home</PageTitle>
 
@@ -28,6 +32,8 @@
     </tbody>
 </table>
 
+
+
 @code{
     public class TestEvent
     {
@@ -42,9 +48,14 @@
         new TestEvent { name = "Sommerfest", date= new DateTime(2025, 5, 14)}
     };
 
+    private bool isLoggedIn;
+    private string? username;
+
     protected override async Task OnInitializedAsync()
     {
-        if (await LoginHelper.UserLoggedIn(new Models.Person()))
+	    isLoggedIn = await SessionStorage.GetItemAsync<bool>("isLoggedIn");
+	    username = await SessionStorage.GetItemAsync<string>("username");
+        if (!isLoggedIn)
         {
             Navigation.NavigateTo("/Login");
         }
