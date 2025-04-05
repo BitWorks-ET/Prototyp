@@ -4,7 +4,7 @@
 
 @inject NavigationManager Navigation
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Übersicht</PageTitle>
 
 <h1>Willkommen, UserName!</h1>
 
@@ -22,7 +22,7 @@
             <tr>
                 <td><a href="@($"/Event/{TestEvent.name}")">@TestEvent.name</a></td>
                 <td>@TestEvent.date</td>
-                <td><button>Anmelden</button></td>
+                <td><button @onclick="() => SignUserUp(TestEvent.name)">Anmelden</button></td>
             </tr>
         }
     </tbody>
@@ -31,7 +31,7 @@
 @code{
     public class TestEvent
     {
-        public string? name { get; set; }
+        public string name { get; set; }
         public DateTime date { get; set; }
     }
 
@@ -39,7 +39,7 @@
     {
         new TestEvent { name = "Grillfest", date = new DateTime(2025, 5, 13)},
         new TestEvent { name = "Important Meeting", date = new DateTime(2026, 5, 13)},
-        new TestEvent { name = "Sommerfest", date= new DateTime(2025, 5, 14)}
+        new TestEvent { name = "Sommerfest", date = new DateTime(2025, 5, 14)}
     };
 
     protected override async Task OnInitializedAsync()
@@ -48,5 +48,11 @@
         {
             Navigation.NavigateTo("/Login");
         }
+    }
+
+    private void SignUserUp(String name)
+    {
+        //da wir die anmeldeseite noch nicht brauchen, kommt hier die anmeldung rein
+        //Navigation.NavigateTo($"/EventSignUp/{name}");
     }
 }

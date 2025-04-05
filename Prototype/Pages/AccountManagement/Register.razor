@@ -2,10 +2,12 @@
 
 @inject NavigationManager Navigation
 
+<PageTitle>Registrierung</PageTitle>
+
 <h3>Registrieren</h3>
 <p>Hier können Sie einen neune Account erstellen, indem Sie die relevanten Informationen eingeben.</p>
 <label for="userName">Benutzername:</label>
-<InputText @bind-Value="userName" placeholder="Somebody123" class="form-control" />
+<InputText id="username" @bind-Value="userName" placeholder="Somebody123" class="form-control" />
 <label for="eMail">E-Mail Adresse:</label>
 <InputText id="eMail" @bind-Value="eMail" placeholder="Somebody@greatcompany.de" class="form-control" />
 <label for="birthday">Geburtsdatum:</label>
