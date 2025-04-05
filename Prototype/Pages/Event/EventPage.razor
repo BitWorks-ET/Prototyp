@@ -15,7 +15,7 @@
 
 <div class="d-flex">
     <div class="p-2">
-    <p class="fw-bold">Datum des Events: </p>
+        <p class="fw-bold">Datum des Events: </p>
     </div>
     <div class="p-2">
         <p>@eventDate</p>
@@ -25,6 +25,12 @@
     </div>
     <div class="p-2">
         <p>@eventTime</p>
+    </div>
+    <div class="p-2">
+        <p class="fw-bold">Ort der Veranstaltung: </p>
+    </div>
+    <div class="p-2">
+        <p>@location</p>
     </div>
 </div>
 
@@ -43,13 +49,14 @@
 
 @code {
     [Parameter]
-    public string name{ get; set;} // ersetzen mit Variable eines Users? oder funktioniert maybe auch so weil übergeben von anderer Seitedk
+    public string name{ get; set;} // ersetzen mit Variable eines Users
     public bool userIsOrga = true;
 
     public DateOnly eventDate;
     public TimeOnly eventTime;
+    public string location = "Da wo du nicht bist";
 
-    private string? infosEvent = "Bla Bla Bla Bla  Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla";
+    private string? infosEvent = "Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla";
 
 
     public void EnableEventEdit()

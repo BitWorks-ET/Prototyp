@@ -28,7 +28,23 @@
     </tbody>
 </table>
 
+@if (userIsOrga)
+{
+    <div class="d-flex">
+        <NavLink href="$/EventAdministration" class="btn btn-primary">
+            Neues Event Erstellen
+        </NavLink>
+        <NavLink href="/manageOrganisation" class="btn btn-primary">
+            Organisation Verwalten
+        </NavLink>
+        <NavLink href="/processSuite" class="btn btn-primary">
+            Prozesse Erstellen
+        </NavLink>
+    </div>
+}
+
 @code{
+    public bool userIsOrga = true;
     public class TestEvent
     {
         public string name { get; set; }

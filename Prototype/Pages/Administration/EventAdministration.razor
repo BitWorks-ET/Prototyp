@@ -13,6 +13,7 @@
     </div>
 </div>
 
+
 <div class="d-flex">
     <div class="p-2">
         <p class="fw-bold">Datum des Events: </p>
@@ -26,6 +27,12 @@
     <div class="p-2">
         <input type="time" @bind="eventTime" class="form-control" />
     </div>
+    <div class="p-2">
+        <p class="fw-bold">Ort der Veranstaltung: </p>
+    </div>
+    <div class="p-2">
+        <InputText @bind-Value="@location" class="form-control" readonly />
+    </div>
 </div>
 
 <h4>Informationen über das Event:</h4>
@@ -35,17 +42,26 @@
     <div class="popup-box">
         <button @onclick="SaveEventChanges">Änderungen speichern</button>
     </div>
+    <div class="popup-box">
+        <button @onclick="DiscardEventChanges">Änderungen verwerfen</button>
+    </div>
 </div>
 
 @code {
     [Parameter]
     public string? name { get; set; } //Name des Events
-    public string? newName; //neuer Name falls geändert
-    public string? eventInfos; //Infos über das Event -> eig auch übergeben
+    public string? eventInfos; //Infos über das Event
     public DateTime eventDate;
     public DateTime eventTime;
+    public string? location = "Immernoch da wo du nicht bist"; // alles eig von Person, aber copy nehmen dass die bearbeiten werden könne -> in methode speichern
 
     private void SaveEventChanges()
+    {
+        // hier aktualisieren der ganzen Variablen des Events
+        Navigation.NavigateTo($"Event/{name}"); //zurück zum Event
+    }
+
+    private void DiscardEventChanges()
     {
         // hier aktualisieren der ganzen Variablen des Events
         Navigation.NavigateTo($"Event/{name}"); //zurück zum Event
