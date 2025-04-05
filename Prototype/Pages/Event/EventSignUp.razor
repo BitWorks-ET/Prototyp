@@ -1,5 +1,13 @@
-﻿<h3>EventSignUp</h3>
+﻿@page "/EventSignUp"
+
+<h3>Anmeldung: @name</h3>
+
+<label for="companions">Benutzername:</label>
+<InputNumber id="companions" @bind-Value="numberCompanions" placeholder="0" class="form-control" />
 
 @code {
+    [Parameter]
+    public string name { get; set; } //brauchen die seite glaube noch nicht mal
+    public int numberCompanions;
 
 }
