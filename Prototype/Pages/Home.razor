@@ -1,7 +1,52 @@
 ﻿@page "/"
 
+@using Prototype.HelperClasses
+
+@inject NavigationManager Navigation
+
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Willkommen, UserName!</h1>
 
-Welcome to your new app.
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Datum</th>
+            <th>Anmelden</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var TestEvent in eventList)
+        {
+            <tr>
+                <td><a href="@($"/Event/{TestEvent.name}")">@TestEvent.name</a></td>
+                <td>@TestEvent.date</td>
+                <td><button>Anmelden</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code{
+    public class TestEvent
+    {
+        public string? name { get; set; }
+        public DateTime date { get; set; }
+    }
+
+    private List<TestEvent> eventList = new()
+    {
+        new TestEvent { name = "Grillfest", date = new DateTime(2025, 5, 13)},
+        new TestEvent { name = "Important Meeting", date = new DateTime(2026, 5, 13)},
+        new TestEvent { name = "Sommerfest", date= new DateTime(2025, 5, 14)}
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (await LoginHelper.UserLoggedIn(new Models.Person()))
+        {
+            Navigation.NavigateTo("/Login");
+        }
+    }
+}

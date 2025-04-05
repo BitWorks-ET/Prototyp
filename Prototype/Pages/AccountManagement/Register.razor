@@ -1,5 +1,50 @@
-﻿<h3>Register</h3>
+﻿@page "/Register"
+
+@inject NavigationManager Navigation
+
+<h3>Registrieren</h3>
+<p>Hier können Sie einen neune Account erstellen, indem Sie die relevanten Informationen eingeben.</p>
+<label for="userName">Benutzername:</label>
+<InputText @bind-Value="userName" placeholder="Somebody123" class="form-control" />
+<label for="eMail">E-Mail Adresse:</label>
+<InputText id="eMail" @bind-Value="eMail" placeholder="Somebody@greatcompany.de" class="form-control" />
+<label for="birthday">Geburtsdatum:</label>
+<InputDate id="birthday" @bind-Value="birthday" class="form-control" />
+<label for="password">Passwort:</label>
+<InputText id="password" type="password" @bind-Value="password" class="form-control" />
+<label for="repeatPassword">Passwort wiederholen:</label>
+<InputText id="repeatPassword" type="password" @bind-Value="repeatedPassword" class="form-control" />
+<button @onclick="validateAndNavigate">Registrieren</button>
+
+@if (popupVisible)
+{
+    <div class="popup-overlay bg-danger bg-opacity-10">
+        <div class="popup-box">
+            <p>Bitte geben Sie alle relevanten Daten für eine Registrierung ein</p>
+            <button @onclick="() => popupVisible = false">Schließen</button>
+        </div>
+    </div>
+}
+
 
 @code {
+    private string? userName;
+    private string? eMail;
+    private DateTime? birthday;
+    private string? password;
+    private string? repeatedPassword;
 
+    private bool popupVisible = false;
+
+    private void validateAndNavigate()
+    {
+        if(this.password == this.repeatedPassword && userName != null && eMail != null && birthday != null && password != null)
+        {
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            popupVisible = true;
+        }
+    }
 }
