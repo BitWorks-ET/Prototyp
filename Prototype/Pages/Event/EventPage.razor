@@ -1,5 +1,37 @@
-﻿<h3>EventPage</h3>
+﻿@page "/Event/{name}"
+
+@inject NavigationManager Navigation
+
+<div>
+    <h3>EventPage von @name</h3>
+    <button>Anmelden</button>
+</div>
+
+<h4>Informationen über das Event:</h4>
+<p>@infosEvent</p>
+
+@if (userIsOrga)
+{
+    <div class="popup-overlay">
+        <div class="popup-box">
+            <button @onclick="EnableEventEdit">Registrieren</button>
+        </div>
+    </div>
+}
 
 @code {
+    [Parameter]
+    public string name{ get; set;} // ersetzten mit Variable eines Users? oder funktioniert maybe auch so weil übergeben von anderer Seitedk
+    public bool userIsOrga = true;
 
+    private string? infosEvent = "Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla";
+
+
+    public void EnableEventEdit()
+    {
+        if (userIsOrga)
+        {
+            Navigation.NavigateTo("/EventAdministration");
+        }
+    }
 }

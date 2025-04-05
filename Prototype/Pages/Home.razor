@@ -1,5 +1,7 @@
 ﻿@page "/"
 
+@using Prototype.HelperClasses
+
 @inject NavigationManager Navigation
 
 <PageTitle>Home</PageTitle>
@@ -11,14 +13,14 @@
         <tr>
             <th>Name</th>
             <th>Datum</th>
-            <th>Anmelden?</th>
+            <th>Anmelden</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var TestEvent in eventList)
         {
             <tr>
-                <td>@TestEvent.name</td>
+                <td><a href="@($"/Event/{TestEvent.name}")">@TestEvent.name</a></td>
                 <td>@TestEvent.date</td>
                 <td><button>Anmelden</button></td>
             </tr>
@@ -27,8 +29,6 @@
 </table>
 
 @code{
-    public bool userLogedIn = false;
-
     public class TestEvent
     {
         public string? name { get; set; }
@@ -44,14 +44,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await checkLogin();
-    }
-
-    private async Task checkLogin()
-    {
-        if (!userLogedIn)
+        if (await LoginHelper.UserLoggedIn(new Models.Person()))
         {
-        // Navigation.NavigateTo("/Login"); (disabled for now)
+            Navigation.NavigateTo("/Login");
         }
     }
 }
