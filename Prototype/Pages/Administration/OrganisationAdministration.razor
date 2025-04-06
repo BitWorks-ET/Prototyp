@@ -1,5 +1,13 @@
 ﻿@page "/manageOrganisation"
 
+@using Blazored.SessionStorage
+@using Prototype.Models
+@using Prototype.Models.Rights
+@inject NavigationManager Navigation
+@inject ISessionStorageService SessionStorage
+
+
+
 <PageTitle>Organisationsübersicht</PageTitle>
 
 <h3>Organisationsübersicht</h3>
@@ -10,20 +18,20 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Name</th>
+                <th>Vorname</th>
+                <th>Nachname</th>
                 <th>E-Mail</th>
-                <th>Geburtsdatum</th>
                 <th>Entfernen</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var TestOrganizer in organizerList)
+            @foreach (var organizer in currentOrg.OrgAdmins)
             {
                 <tr>
-                    <td>@TestOrganizer.name</td>
-                    <td>@TestOrganizer.eMail</td>
-                    <td>@TestOrganizer.birthday</td>
-                    <td><button @onclick="() => RemoveOrganizer(TestOrganizer)">Entfernen</button></td> <!--optional-->
+                    <td>@organizer.FirstName</td>
+                    <td>@organizer.LastName</td>
+                    <td>@organizer.eMail</td>
+                    <td><button @onclick="RemoveOrganizer">Entfernen</button></td> <!--optional-->
                 </tr>
             }
         </tbody>
@@ -33,37 +41,43 @@
         <div class="d-flex">
             <p>E-Mail des Mitarbeiters</p>
             <InputText id="nameOrMail" @bind-Value="addMail" class="form-control" />
-            <button @onclick="() => AddOrganizer(new TestOrganizer())">Organisator hinzufügen</button>
+            <button @onclick="AddOrganizer">Organisator hinzufügen</button>
         </div>
     </div>
 
 </div>
 
+
+
 @code {
-    public class TestOrganizer
-    {
-        public string name { get; set; }
-        public string eMail { get; set; }
-        public DateTime birthday { get; set; }
-    }
+	private bool isLoggedIn;
+	private Person currentUser;
+	private Rights authority = new Member();
+	private Organization currentOrg;
+
+	protected override async Task OnInitializedAsync()
+	{
+		isLoggedIn = await SessionStorage.GetItemAsync<bool>("isLoggedIn");
+		if (!isLoggedIn)
+		{
+			Navigation.NavigateTo("/Login");
+			return;
+		}
+		currentUser = await SessionStorage.GetItemAsync<Person>("user");
+		authority = await SessionStorage.GetItemAsync<Rights>("rights");
+		currentOrg = Application.Instance.GetOrganization(currentUser.OrganizationId);
+	}
+
 
     private string addMail;
 
-    private List<TestOrganizer> organizerList = new()
+    private void AddOrganizer()
     {
-        new TestOrganizer { name = "Günther Jauch", eMail = "jauch@someCompany.de" , birthday = new DateTime(2025, 5, 13)},
-        new TestOrganizer { name = "Max Mustermann", eMail = "mustermann@someCompany.de", birthday = new DateTime(2026, 5, 13)},
-        new TestOrganizer { name = "Sabine Bauer", eMail = "bauer@someCompany.de", birthday = new DateTime(2025, 5, 14)}
-    };
-
-    private void AddOrganizer(TestOrganizer tOrga)
-    {
-        //get him in here / passt das oder wie wollen wir die hinzufügen wegen name und so? alles angeben oder muss er
-        //schon nen acc haben bevor man ihn hier hinzufügen kann?
+        currentOrg.OrgAdmins.Add(Application.Instance.GetPerson(addMail));
     }
 
-    private void RemoveOrganizer(TestOrganizer tOrga)
+    private void RemoveOrganizer()
     {
-        //get him out of here XD, feature optional -> siehe button
+	    currentOrg.OrgAdmins.Remove(Application.Instance.GetPerson(addMail));
     }
 }

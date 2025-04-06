@@ -1,15 +1,21 @@
-﻿@page "/Event/{name}"
+﻿@page "/Event/{eventId}"
 
+@using Blazored.SessionStorage
+@using Prototype.Models
+@using Prototype.Models.Rights
 @inject NavigationManager Navigation
+@inject ISessionStorageService SessionStorage
 
-<PageTitle>@name</PageTitle>
+
+
+<PageTitle>@currentEvent.Name</PageTitle>
 
 <div class="d-flex w-100">
     <div class="w-25">
-        <h3>@name</h3>
+        <h3>@currentEvent.Name</h3>
     </div>
     <div class="w-25 justify-content-center">
-        <button @onclick="SignUserUp">Anmelden</button>
+        <button @onclick="() => EventSignUp(currentEvent)">Anmelden</button>
     </div>
 </div>
 
@@ -18,27 +24,27 @@
         <p class="fw-bold">Datum des Events: </p>
     </div>
     <div class="p-2">
-        <p>@eventDate</p>
+        <p>@currentEvent.Date</p>
     </div>
     <div class="p-2">
         <p class="fw-bold">Uhrzeit: </p>
     </div>
     <div class="p-2">
-        <p>@eventTime</p>
+        <p>@currentEvent.Time</p>
     </div>
     <div class="p-2">
         <p class="fw-bold">Ort der Veranstaltung: </p>
     </div>
     <div class="p-2">
-        <p>@location</p>
+        <p>@currentEvent.Location</p>
     </div>
 </div>
 
 
 <h4>Informationen über das Event:</h4>
-<p>@infosEvent</p>
+<p>@currentEvent.Description</p>
 
-@if (userIsOrga)
+@if (authority.ManageEvent)
 {
     <div class="popup-overlay">
         <div class="popup-box">
@@ -48,28 +54,41 @@
 }
 
 @code {
-    [Parameter]
-    public string name{ get; set;} // ersetzen mit Variable eines Users
-    public bool userIsOrga = true;
+	[Parameter]
+	public int eventId{ get; set;}
 
-    public DateOnly eventDate;
-    public TimeOnly eventTime;
-    public string location = "Da wo du nicht bist";
+    private bool isLoggedIn;
+    private Person currentUser;
+    private Rights authority = new Member();
+    private Event currentEvent;
 
-    private string? infosEvent = "Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla";
+    protected override async Task OnInitializedAsync()
+    {
+	    isLoggedIn = await SessionStorage.GetItemAsync<bool>("isLoggedIn");
+	    if (!isLoggedIn)
+	    {
+		    Navigation.NavigateTo("/Login");
+		    return;
+	    }
+	    currentUser = await SessionStorage.GetItemAsync<Person>("user");
+	    authority = await SessionStorage.GetItemAsync<Rights>("rights");
+	    currentEvent = Application.Instance.GetEvent(eventId);
+    }
+
 
 
     public void EnableEventEdit()
     {
-        if (userIsOrga)
-        {
-            Navigation.NavigateTo($"/EventAdministration/{name}"); // falls übergabe über eine Variable´: eher über ID
-        }
+	    Navigation.NavigateTo($"/EventAdministration/{currentEvent.Name}"); // falls übergabe über eine Variable´: eher über ID
     }
 
-    public void SignUserUp()
+
+    private void EventSignUp(Models.Event currentEvent)
     {
-        //da wir die anmeldeseite noch nicht brauchen, kommt hier die anmeldung rein
-        //Navigation.NavigateTo($"/EventSignUp/{name}");
+	    if (!currentEvent.EventMembers.Contains(currentUser))
+	    {
+		    currentUser.Events.Add(currentEvent.Id);
+		    currentEvent.EventMembers.Add(currentUser);
+	    }
     }
 }

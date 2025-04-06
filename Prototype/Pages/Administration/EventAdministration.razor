@@ -1,13 +1,20 @@
-﻿@page "/EventAdministration/{name}"
+﻿@page "/EventAdministration/{eventId}"
 @page "/EventAdministration"
 
+@using Blazored.SessionStorage
+@using Prototype.Models
+@using Prototype.Models.Rights
+@using Blazored.SessionStorage
 @inject NavigationManager Navigation
+@inject ISessionStorageService SessionStorage
+
+
 
 <PageTitle>Eventbearbeitung</PageTitle>
 
 <div class="d-flex w-100">
     <div class="w-25">
-        <h3><InputTextArea @bind-Value="@name" class="form-control" /></h3>
+        <h3><InputTextArea @bind-Value="@currentEvent.Name" class="form-control" /></h3>
     </div>
     <div class="w-25 justify-content-center">
         <button disabled>Anmelden</button>
@@ -20,24 +27,24 @@
         <p class="fw-bold">Datum des Events: </p>
     </div>
     <div class="p-2">
-        <InputDate id="birthday" @bind-Value="eventDate" class="form-control" />
+        <InputDate id="birthday" @bind-Value="currentEvent.Date" class="form-control" />
     </div>
     <div class="p-2">
         <p class="fw-bold">Uhrzeit: </p>
     </div>
     <div class="p-2">
-        <input type="time" @bind="eventTime" class="form-control" />
+        <input type="time" @bind="currentEvent.Time" class="form-control" />
     </div>
     <div class="p-2">
         <p class="fw-bold">Ort der Veranstaltung: </p>
     </div>
     <div class="p-2">
-        <InputText @bind-Value="@location" class="form-control" />
+        <InputText @bind-Value="@currentEvent.Location" class="form-control" />
     </div>
 </div>
 
 <h4>Informationen über das Event:</h4>
-<InputTextArea @bind-Value="eventInfos" class="form-control" />
+<InputTextArea @bind-Value="currentEvent.Description" class="form-control" />
 
 <div class="d-flex">
     <div class="p-2">
@@ -86,12 +93,74 @@
 </div>
 
 @code {
-    [Parameter]
-    public string? name { get; set; } //Name des Events
-    public string? eventInfos; //Infos über das Event
-    public DateTime eventDate;
-    public DateTime eventTime;
-    public string? location = "Immernoch da wo du nicht bist"; // alles eig von Person, aber copy nehmen dass die bearbeiten werden könne -> in methode speichern
+	[Parameter]
+	public int eventId{ get; set;}
+
+    private bool isLoggedIn;
+    private Person currentUser;
+    private Rights authority = new Member();
+    private Event currentEvent;
+
+    private bool isNewEvent;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoggedIn = await SessionStorage.GetItemAsync<bool>("isLoggedIn");
+        if (!isLoggedIn)
+        {
+            Navigation.NavigateTo("/Login");
+            return;
+        }
+        currentUser = await SessionStorage.GetItemAsync<Person>("user");
+        authority = await SessionStorage.GetItemAsync<Rights>("rights");
+        currentEvent = Application.Instance.GetEvent(eventId);
+        if (currentEvent == null)
+        {
+            isNewEvent = true;
+            currentEvent = new Event("NewEvent", currentUser);
+        }
+        else
+        {
+            isNewEvent = false;
+            currentEvent = currentEvent.ShallowCopy();
+        }
+    }
+
+
+    private async void SaveEventChanges()
+    {
+        Organization currentOrg = Application.Instance.GetOrganization(currentUser.OrganizationId);
+        if (isNewEvent)
+        {
+            Application.Instance.AddEvent(currentEvent);
+            currentOrg.Events.Add(currentEvent);
+        }
+        else
+        {
+            Event oldEvent = Application.Instance.GetEvent(eventId);
+            Application.Instance.RemoveEvent(oldEvent);
+            currentOrg.Events.Remove(oldEvent);
+
+            Application.Instance.AddEvent(currentEvent);
+            currentOrg.Events.Add(currentEvent);
+        }
+	    Navigation.NavigateTo($"Event/{currentEvent.Name}");
+    }
+
+    private async void DiscardEventChanges()
+    {
+	    if (isNewEvent)
+	    {
+		    Navigation.NavigateTo($"/");
+	    }
+	    else
+	    {
+            Event oldEvent = Application.Instance.GetEvent(eventId);
+            Navigation.NavigateTo($"Event/{oldEvent.Name}");
+	    }
+    }
+
 
     public class TestProcess
     {
@@ -111,30 +180,5 @@
     public void ExecuteProcess(TestProcess process)
     {
         //ausführng des Prozesses
-    }
-
-    private void SaveEventChanges()
-    {
-        // hier aktualisieren der ganzen Variablen des Events
-        Navigation.NavigateTo($"Event/{name}"); //zurück zum Event
-    }
-
-    private void DiscardEventChanges()
-    {
-        // hier aktualisieren der ganzen Variablen des Events
-        Navigation.NavigateTo($"Event/{name}"); //zurück zum Event
-    }
-
-    protected override async Task OnInitializedAsync() //falls wir hier noch ne Unterscheidung machen müssen?
-    {
-        if (string.IsNullOrEmpty(name))
-        {
-            // Neues Event erstellen
-        }
-        else
-        {
-            // Event mit Name laden
-        }
-
     }
 }

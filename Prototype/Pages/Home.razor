@@ -33,7 +33,7 @@
         @foreach (var orgEvent in allEvents)
         {
             <tr>
-                <td><a href="@($"/Event/{orgEvent.Name}")">@orgEvent.Name</a></td>
+                <td><a href="@($"/Event/{orgEvent.Id}")">@orgEvent.Name</a></td>
                 <td>@orgEvent.Date</td>
                 <td><button @onclick="() => EventSignUp(orgEvent)">Anmelden</button></td>
             </tr>
@@ -57,37 +57,22 @@
 }
 
 
-
-    private IEnumerable<Event> GetFilteredEvents()
-    {
-        if (!userActive && !eventOver)
-            return eventList;
-
-        return eventList.Where(e =>
-            (userActive && CurrentUserIsActive(e)) ||
-            (eventOver && (e.date <= DateTime.Today)));
-    }
-
-    private bool CurrentUserIsActive(TestEvent testEvent){
-        
-        //hier Logik die erkennt ib USer zum event angemeldet ist
-        return true;
-    }
-
+@code
+{
     private bool isLoggedIn;
     private Person currentUser;
     private Rights authority = new Member();
 
     private List<Models.Event> allEvents = new List<Models.Event>();
 
+
     protected override async Task OnInitializedAsync()
     {
         userForTesting();
-
-	    isLoggedIn = await SessionStorage.GetItemAsync<bool>("isLoggedIn");
+        isLoggedIn = await SessionStorage.GetItemAsync<bool>("isLoggedIn");
         if (!isLoggedIn)
         {
-	        Navigation.NavigateTo("/Login");
+            Navigation.NavigateTo("/Login");
             return;
         }
         currentUser = await SessionStorage.GetItemAsync<Person>("user");
@@ -99,23 +84,45 @@
 
     private void EventSignUp(Models.Event currentEvent)
     {
-	    if (!currentEvent.EventMembers.Contains(currentUser))
-	    {
-		    currentUser.Events.Add(currentEvent.Id);
-		    currentEvent.EventMembers.Add(currentUser);
-	    }
+        if (!currentEvent.EventMembers.Contains(currentUser))
+        {
+            currentUser.Events.Add(currentEvent.Id);
+            currentEvent.EventMembers.Add(currentUser);
+        }
     }
 
 
     private void userForTesting()
     {
         Person testUser = new Person("lol@lol", BCrypt.HashPassword("lol"));
-	    Application.Instance.AddMember(testUser);
+        Application.Instance.AddMember(testUser);
 
-	    Organization newOrg = new Organization("Test", testUser);
-	    newOrg.Domain = "lol";
-	    Application.Instance.AddOrganization(newOrg);
+        Organization newOrg = new Organization("Test", testUser);
+        newOrg.Domain = "lol";
+        Application.Instance.AddOrganization(newOrg);
 
-	    testUser.OrganizationId = newOrg.Id;
+        testUser.OrganizationId = newOrg.Id;
+    }
+
+    private bool userActive = true;
+
+    private bool eventOver = true;
+    /*
+    private IEnumerable<Models.Event> GetFilteredEvents()
+    {
+        if (!userActive && !eventOver) // Angemeldet ans Event
+            return eventList;
+
+        return eventList.Where(e =>
+            (userActive && CurrentUserIsActive(e)) ||
+            (eventOver && (e.date <= DateTime.Today)));
+    }
+    */
+
+
+    private bool CurrentUserIsActive(Models.Event testEvent){
+        
+	    //hier Logik die erkennt ib USer zum event angemeldet ist
+	    return true;
     }
 }
