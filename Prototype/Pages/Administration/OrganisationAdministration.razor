@@ -52,8 +52,9 @@
 @code {
 	private bool isLoggedIn;
 	private Person currentUser;
+	private string rightsType;
 	private Rights authority = new Member();
-	private Organization currentOrg;
+	private Organization currentOrg = new Organization("", new Person("", ""));
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -64,7 +65,16 @@
 			return;
 		}
 		currentUser = await SessionStorage.GetItemAsync<Person>("user");
-		authority = await SessionStorage.GetItemAsync<Rights>("rights");
+		rightsType = await SessionStorage.GetItemAsStringAsync("rightsType");
+		if (rightsType == "Member")
+		{
+			authority = await SessionStorage.GetItemAsync<Member>("rights"); 
+		}
+		else if (rightsType == "Organizer")
+		{
+			authority = await SessionStorage.GetItemAsync<Organizer>("rights");
+		}
+
 		currentOrg = Application.Instance.GetOrganization(currentUser.OrganizationId);
 	}
 

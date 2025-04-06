@@ -93,13 +93,14 @@
 </div>
 
 @code {
-	[Parameter]
-	public int eventId{ get; set;}
+    [Parameter]
+    public string? eventId{ get; set;}
 
     private bool isLoggedIn;
     private Person currentUser;
+    private string rightsType;
     private Rights authority = new Member();
-    private Event currentEvent;
+    private Event currentEvent = new Event("", new Person("", ""));
 
     private bool isNewEvent;
 
@@ -113,9 +114,18 @@
             return;
         }
         currentUser = await SessionStorage.GetItemAsync<Person>("user");
-        authority = await SessionStorage.GetItemAsync<Rights>("rights");
-        currentEvent = Application.Instance.GetEvent(eventId);
-        if (currentEvent == null)
+        rightsType = await SessionStorage.GetItemAsStringAsync("rightsType");
+        if (rightsType == "Member")
+        {
+	        authority = await SessionStorage.GetItemAsync<Member>("rights"); 
+        }
+        else if (rightsType == "Organizer")
+        {
+	        authority = await SessionStorage.GetItemAsync<Organizer>("rights");
+        }
+
+
+        if (eventId == null)
         {
             isNewEvent = true;
             currentEvent = new Event("NewEvent", currentUser);
@@ -123,12 +133,13 @@
         else
         {
             isNewEvent = false;
+            currentEvent = Application.Instance.GetEvent(int.Parse(eventId));
             currentEvent = currentEvent.ShallowCopy();
         }
     }
 
 
-    private async void SaveEventChanges()
+    private void SaveEventChanges()
     {
         Organization currentOrg = Application.Instance.GetOrganization(currentUser.OrganizationId);
         if (isNewEvent)
@@ -138,17 +149,17 @@
         }
         else
         {
-            Event oldEvent = Application.Instance.GetEvent(eventId);
+            Event oldEvent = Application.Instance.GetEvent(int.Parse(eventId));
             Application.Instance.RemoveEvent(oldEvent);
             currentOrg.Events.Remove(oldEvent);
 
             Application.Instance.AddEvent(currentEvent);
             currentOrg.Events.Add(currentEvent);
         }
-	    Navigation.NavigateTo($"Event/{currentEvent.Name}");
+	    Navigation.NavigateTo($"Event/{eventId}");
     }
 
-    private async void DiscardEventChanges()
+    private void DiscardEventChanges()
     {
 	    if (isNewEvent)
 	    {
@@ -156,8 +167,8 @@
 	    }
 	    else
 	    {
-            Event oldEvent = Application.Instance.GetEvent(eventId);
-            Navigation.NavigateTo($"Event/{oldEvent.Name}");
+            Event oldEvent = Application.Instance.GetEvent(int.Parse(eventId));
+            Navigation.NavigateTo($"Event/{eventId}");
 	    }
     }
 

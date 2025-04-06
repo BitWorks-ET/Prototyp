@@ -61,9 +61,13 @@
 {
     private bool isLoggedIn;
     private Person currentUser;
+    private string rightsType;
     private Rights authority = new Member();
 
-    private List<Models.Event> allEvents = new List<Models.Event>();
+    private List<Models.Event> allEvents = new List<Models.Event>
+    {
+	    new Models.Event("Test", new Person("", ""))
+    };
 
 
     protected override async Task OnInitializedAsync()
@@ -76,7 +80,17 @@
             return;
         }
         currentUser = await SessionStorage.GetItemAsync<Person>("user");
-        authority = await SessionStorage.GetItemAsync<Rights>("rights");
+
+        rightsType = await SessionStorage.GetItemAsStringAsync("rightsType");
+        if (rightsType == "Member")
+        {
+	        authority = await SessionStorage.GetItemAsync<Member>("rights"); 
+        }
+        else if (rightsType == "Organizer")
+        {
+            authority = await SessionStorage.GetItemAsync<Organizer>("rights");
+        }
+        
 
         allEvents = Application.Instance.GetOrganization(currentUser.OrganizationId).Events;
     }

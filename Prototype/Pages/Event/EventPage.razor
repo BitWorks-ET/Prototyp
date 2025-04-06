@@ -54,13 +54,14 @@
 }
 
 @code {
-	[Parameter]
-	public int eventId{ get; set;}
+    [Parameter]
+    public string eventId{ get; set; }
 
     private bool isLoggedIn;
     private Person currentUser;
+    private string rightsType;
     private Rights authority = new Member();
-    private Event currentEvent;
+    private Event currentEvent = new Event("", new Person("", ""));
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,15 +72,24 @@
 		    return;
 	    }
 	    currentUser = await SessionStorage.GetItemAsync<Person>("user");
-	    authority = await SessionStorage.GetItemAsync<Rights>("rights");
-	    currentEvent = Application.Instance.GetEvent(eventId);
+	    rightsType = await SessionStorage.GetItemAsStringAsync("rightsType");
+	    if (rightsType == "Member")
+	    {
+		    authority = await SessionStorage.GetItemAsync<Member>("rights"); 
+	    }
+	    else if (rightsType == "Organizer")
+	    {
+		    authority = await SessionStorage.GetItemAsync<Organizer>("rights");
+	    }
+
+	    currentEvent = Application.Instance.GetEvent(int.Parse(eventId));
     }
 
 
 
     public void EnableEventEdit()
     {
-	    Navigation.NavigateTo($"/EventAdministration/{currentEvent.Name}"); // falls übergabe über eine Variable´: eher über ID
+	    Navigation.NavigateTo($"/EventAdministration/{eventId}"); // falls übergabe über eine Variable´: eher über ID
     }
 
 

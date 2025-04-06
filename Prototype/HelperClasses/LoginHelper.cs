@@ -18,10 +18,12 @@ namespace Prototype.HelperClasses
                     await sessionStorage.SetItemAsync("user", user);
                     if (Application.Instance.GetOrganization(user.OrganizationId).OrgAdmins.Contains(user))
                     {
+                        await sessionStorage.SetItemAsync("rightsType", "Organizer");
                         await sessionStorage.SetItemAsync("rights", new Organizer());
                     }
                     else
                     {
+                        await sessionStorage.SetItemAsync("rightsType", "Member");
                         await sessionStorage.SetItemAsync("rights", new Member());
                     }
                     
