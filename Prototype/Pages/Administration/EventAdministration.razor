@@ -1,4 +1,5 @@
 ﻿@page "/EventAdministration/{name}"
+@page "/EventAdministration"
 
 @inject NavigationManager Navigation
 
@@ -31,19 +32,56 @@
         <p class="fw-bold">Ort der Veranstaltung: </p>
     </div>
     <div class="p-2">
-        <InputText @bind-Value="@location" class="form-control" readonly />
+        <InputText @bind-Value="@location" class="form-control" />
     </div>
 </div>
 
 <h4>Informationen über das Event:</h4>
 <InputTextArea @bind-Value="eventInfos" class="form-control" />
 
-<div class="popup-overlay">
-    <div class="popup-box">
+<div class="d-flex">
+    <div class="p-2">
+        <button @onclick="SaveEventChanges">Prozessschritt hinzufügen</button> <!--was machen wir hier noch genau alles-->
+    </div>
+    <div class="p-2">
         <button @onclick="SaveEventChanges">Änderungen speichern</button>
     </div>
-    <div class="popup-box">
+    <div class="p-2">
         <button @onclick="DiscardEventChanges">Änderungen verwerfen</button>
+    </div>
+</div>
+<div>
+    <div>
+        <h3>Eventprozesse</h3>
+    </div>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ausführen</th>
+                    <th>Prozessname</th>
+                    <th>Beschreibung</th>
+                    <th>Platzhalter</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var TestProcess in processList)
+                {
+                    <tr>
+                        <td><button @onclick="() => ExecuteProcess(TestProcess)">Ausführen</button></td>
+                        <td>@TestProcess.name</td>
+                        <td>@TestProcess.tasks</td>
+                        <InputText @bind-Value="TestProcess.placeholder" class="form-control" />
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <NavLink href="/processSuite" class="btn btn-primary">
+            Neuen Prozess hinzufügen
+        </NavLink>
     </div>
 </div>
 
@@ -55,6 +93,26 @@
     public DateTime eventTime;
     public string? location = "Immernoch da wo du nicht bist"; // alles eig von Person, aber copy nehmen dass die bearbeiten werden könne -> in methode speichern
 
+    public class TestProcess
+    {
+        public string? name;
+        public string? tasks;
+        public bool isDone;
+        public string? placeholder;
+    }
+
+    private List<TestProcess> processList = new()
+    {
+        new TestProcess { name = "Einladungen vorbereiten", tasks = "Automatischer Versandt von E-Mail Einladungen", isDone = true},
+        new TestProcess { name = "Anmeldeschluss", tasks = "Aktiviert den Anmeldeschluss zu einem Zeitpunkt (Kann früher ausgelöst werden)", isDone = false},
+        new TestProcess { name = "Dankessagung", tasks = "versenden von Dankes-e-Mails", isDone = false}
+    };
+
+    public void ExecuteProcess(TestProcess process)
+    {
+        //ausführng des Prozesses
+    }
+
     private void SaveEventChanges()
     {
         // hier aktualisieren der ganzen Variablen des Events
@@ -65,5 +123,18 @@
     {
         // hier aktualisieren der ganzen Variablen des Events
         Navigation.NavigateTo($"Event/{name}"); //zurück zum Event
+    }
+
+    protected override async Task OnInitializedAsync() //falls wir hier noch ne Unterscheidung machen müssen?
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            // Neues Event erstellen
+        }
+        else
+        {
+            // Event mit Name laden
+        }
+
     }
 }

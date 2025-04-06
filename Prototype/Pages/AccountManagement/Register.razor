@@ -10,7 +10,7 @@
 
 <PageTitle>Registrierung</PageTitle>
 <h3>Registrieren</h3>
-<p>Hier können Sie einen neune Account erstellen, indem Sie die relevanten Informationen eingeben.</p>
+<p>Hier können Sie einen neuen Account erstellen, indem Sie die relevanten Informationen eingeben.</p>
 
 <label for="userName">Vorname:</label>
 <InputText @bind-Value="firstname" placeholder="Max" class="form-control" />
@@ -31,6 +31,16 @@
 <InputText id="repeatPassword" type="password" @bind-Value="repeatedPassword" class="form-control" />
 
 <button @onclick="tryToRegister">Registrieren</button>
+
+@if (registerInProgress)
+{
+	<div class="d-flex">
+		<div class="spinner-border text-primary" role="status">
+
+		</div>
+		<span>Registrierung im Gange, bitte warten...</span>
+	</div>
+}
 
 @if (popupVisible)
 {
@@ -55,13 +65,17 @@
 	private string? repeatedPassword;
 
 	private bool popupVisible = false;
-	private String popupMessage = ""; 
+	private String popupMessage = "";
+	private bool registerInProgress = false;
 
 
 	private async Task tryToRegister()
 	{
 		if (validateData())
 		{
+			registerInProgress = true;
+			StateHasChanged();
+			await Task.Delay(200);
 			createAccount();
 			await LoginHelper.LogInUser(eMail, password, SessionStorage);
 

@@ -1,7 +1,69 @@
 ﻿@page "/manageOrganisation"
 
-<h3>OrganisationAdministration</h3>
+<PageTitle>Organisationsübersicht</PageTitle>
+
+<h3>Organisationsübersicht</h3>
+<p>Hier haben Sie eine Übersicht über Ihre Organisation.</p>
+
+<div>
+    <h4>Liste der Organisatoren</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>Geburtsdatum</th>
+                <th>Entfernen</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var TestOrganizer in organizerList)
+            {
+                <tr>
+                    <td>@TestOrganizer.name</td>
+                    <td>@TestOrganizer.eMail</td>
+                    <td>@TestOrganizer.birthday</td>
+                    <td><button @onclick="() => RemoveOrganizer(TestOrganizer)">Entfernen</button></td> <!--optional-->
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div>
+        <h3>Organisator hizufügen:</h3>
+        <div class="d-flex">
+            <p>E-Mail des Mitarbeiters</p>
+            <InputText id="nameOrMail" @bind-Value="addMail" class="form-control" />
+            <button @onclick="() => AddOrganizer(new TestOrganizer())">Organisator hinzufügen</button>
+        </div>
+    </div>
+
+</div>
 
 @code {
+    public class TestOrganizer
+    {
+        public string name { get; set; }
+        public string eMail { get; set; }
+        public DateTime birthday { get; set; }
+    }
 
+    private string addMail;
+
+    private List<TestOrganizer> organizerList = new()
+    {
+        new TestOrganizer { name = "Günther Jauch", eMail = "jauch@someCompany.de" , birthday = new DateTime(2025, 5, 13)},
+        new TestOrganizer { name = "Max Mustermann", eMail = "mustermann@someCompany.de", birthday = new DateTime(2026, 5, 13)},
+        new TestOrganizer { name = "Sabine Bauer", eMail = "bauer@someCompany.de", birthday = new DateTime(2025, 5, 14)}
+    };
+
+    private void AddOrganizer(TestOrganizer tOrga)
+    {
+        //get him in here / passt das oder wie wollen wir die hinzufügen wegen name und so? alles angeben oder muss er
+        //schon nen acc haben bevor man ihn hier hinzufügen kann?
+    }
+
+    private void RemoveOrganizer(TestOrganizer tOrga)
+    {
+        //get him out of here XD, feature optional -> siehe button
+    }
 }
