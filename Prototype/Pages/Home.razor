@@ -1,10 +1,12 @@
 ﻿@page "/"
 
+@using BCrypt.Net
 @using Blazored.SessionStorage
-@using Prototype.HelperClasses
 @using Prototype.Models
+@using Prototype.Models.Rights
 @inject NavigationManager Navigation
 @inject ISessionStorageService SessionStorage
+
 
 
 <PageTitle>Übersicht</PageTitle>
@@ -20,18 +22,18 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var TestEvent in eventList)
+        @foreach (var orgEvent in allEvents)
         {
             <tr>
-                <td><a href="@($"/Event/{TestEvent.name}")">@TestEvent.name</a></td>
-                <td>@TestEvent.date</td>
-                <td><button @onclick="() => SignUserUp(TestEvent.name)">Anmelden</button></td>
+                <td><a href="@($"/Event/{orgEvent.Name}")">@orgEvent.Name</a></td>
+                <td>@orgEvent.Date</td>
+                <td><button @onclick="() => EventSignUp(orgEvent)">Anmelden</button></td>
             </tr>
         }
     </tbody>
 </table>
 
-@if (userIsOrga)
+@if (authority.CreateEvent) // Alle einzeln machen
 {
     <div class="d-flex">
         <NavLink href="$/EventAdministration" class="btn btn-primary">
@@ -46,37 +48,51 @@
     </div>
 }
 
+
+
 @code{
-    public bool userIsOrga = true;
-    public class TestEvent
-    {
-        public string name { get; set; }
-        public DateTime date { get; set; }
-    }
-
-    private List<TestEvent> eventList = new()
-    {
-        new TestEvent { name = "Grillfest", date = new DateTime(2025, 5, 13)},
-        new TestEvent { name = "Important Meeting", date = new DateTime(2026, 5, 13)},
-        new TestEvent { name = "Sommerfest", date = new DateTime(2025, 5, 14)}
-    };
-
     private bool isLoggedIn;
-    private string? username;
+    private Person currentUser;
+    private Rights authority = new Member();
+
+    private List<Models.Event> allEvents = new List<Models.Event>();
 
     protected override async Task OnInitializedAsync()
     {
+        userForTesting();
+
 	    isLoggedIn = await SessionStorage.GetItemAsync<bool>("isLoggedIn");
-	    username = await SessionStorage.GetItemAsync<string>("username");
         if (!isLoggedIn)
         {
-            Navigation.NavigateTo("/Login");
+	        Navigation.NavigateTo("/Login");
+            return;
         }
+        currentUser = await SessionStorage.GetItemAsync<Person>("user");
+        authority = await SessionStorage.GetItemAsync<Rights>("rights");
+
+        allEvents = Application.Instance.GetOrganization(currentUser.OrganizationId).Events;
     }
 
-    private void SignUserUp(String name)
+
+    private void EventSignUp(Models.Event currentEvent)
     {
-        //da wir die anmeldeseite noch nicht brauchen, kommt hier die anmeldung rein
-        //Navigation.NavigateTo($"/EventSignUp/{name}");
+	    if (!currentEvent.EventMembers.Contains(currentUser))
+	    {
+		    currentUser.Events.Add(currentEvent.Id);
+		    currentEvent.EventMembers.Add(currentUser);
+	    }
+    }
+
+
+    private void userForTesting()
+    {
+        Person testUser = new Person("lol@lol", BCrypt.HashPassword("lol"));
+	    Application.Instance.AddMember(testUser);
+
+	    Organization newOrg = new Organization("Test", testUser);
+	    newOrg.Domain = "lol";
+	    Application.Instance.AddOrganization(newOrg);
+
+	    testUser.OrganizationId = newOrg.Id;
     }
 }

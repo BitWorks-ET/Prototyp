@@ -76,16 +76,21 @@
 
 	private void createAccount()
 	{
-		Person newPerson = new Person();
+		Person newPerson = new Person(eMail, BCrypt.HashPassword(password));
 
 		newPerson.FirstName = firstname;
 		newPerson.LastName = lastname;
-		newPerson.Birthday = birthday; // WTF???
+		newPerson.Birthday = birthday;
 		newPerson.Gender = gender;
 
-		newPerson.eMail = eMail;
-		newPerson.PasswordHash = BCrypt.HashPassword(password);
-
+		foreach (Organization organization in Application.Instance.GetOrganizations())
+		{
+			if (eMail.Split('@')[1] == organization.Domain)
+			{
+				organization.OrgMembers.Add(newPerson);
+				newPerson.OrganizationId = organization.Id;
+			}
+		}
 
 		Application.Instance.AddMember(newPerson);
 	}
@@ -105,9 +110,9 @@
 			return false;
 		}
 
-	    if (eMail == null)
+	    if (eMail == null || !eMail.Contains("@"))
 	    {
-			popupMessage = "Bitte geben Sie eine E-Mail Addresse ein.";
+			popupMessage = "Bitte geben Sie eine gültige E-Mail Addresse ein.";
 		    return false;
 	    }
 

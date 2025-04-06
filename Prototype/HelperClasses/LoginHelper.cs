@@ -1,5 +1,6 @@
 ﻿using Prototype.Models;
 using Blazored.SessionStorage;
+using Prototype.Models.Rights;
 
 namespace Prototype.HelperClasses
 {
@@ -14,7 +15,16 @@ namespace Prototype.HelperClasses
                 if (BCrypt.Net.BCrypt.Verify(passwordHash, user.PasswordHash))
                 {
                     await sessionStorage.SetItemAsync("isLoggedIn", true);
-                    await sessionStorage.SetItemAsync("username", username);
+                    await sessionStorage.SetItemAsync("user", user);
+                    if (Application.Instance.GetOrganization(user.OrganizationId).OrgAdmins.Contains(user))
+                    {
+                        await sessionStorage.SetItemAsync("rights", new Organizer());
+                    }
+                    else
+                    {
+                        await sessionStorage.SetItemAsync("rights", new Member());
+                    }
+                    
                     return true;
                 }
             }

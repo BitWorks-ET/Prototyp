@@ -2,5 +2,5 @@
 
 public class Organizer : Rights
 {
-    
+    public Organizer(){}
 }

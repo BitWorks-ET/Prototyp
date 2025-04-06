@@ -2,5 +2,5 @@
 
 public class Member : Rights
 {
-    
+    public Member(){}
 }

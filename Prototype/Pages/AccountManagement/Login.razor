@@ -1,6 +1,5 @@
 ﻿@page "/Login"
 
-@using BCrypt.Net
 @using Blazored.SessionStorage
 @using Prototype.HelperClasses
 @inject NavigationManager Navigation
@@ -42,7 +41,7 @@
     private String? password;
 
     private bool popupVisible = false;
-    private String popupMessage = "";
+    private String? popupMessage = "";
 
 
     private async Task tryToLogin()
