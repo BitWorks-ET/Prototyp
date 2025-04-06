@@ -58,25 +58,28 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Erledigt</th>
+                    <th>Ausführen</th>
                     <th>Prozessname</th>
-                    <th>Zu tun</th>
+                    <th>Beschreibung</th>
+                    <th>Platzhalter</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var TestProcess in processList)
                 {
                     <tr>
-                        <td><input type="checkbox" @bind="TestProcess.isDone" /> Bereits Angemeldet</td>
+                        <td><button @onclick="() => ExecuteProcess(TestProcess)">Ausführen</button></td>
                         <td>@TestProcess.name</td>
                         <td>@TestProcess.tasks</td>
+                        <InputText @bind-Value="TestProcess.placeholder" class="form-control" />
+
                     </tr>
                 }
             </tbody>
         </table>
     </div>
     <div>
-        <NavLink href="/processSuite">
+        <NavLink href="/processSuite" class="btn btn-primary">
             Neuen Prozess hinzufügen
         </NavLink>
     </div>
@@ -95,14 +98,20 @@
         public string? name;
         public string? tasks;
         public bool isDone;
+        public string? placeholder;
     }
 
     private List<TestProcess> processList = new()
     {
-        new TestProcess { name = "Einladungen vorbereiten", tasks = "Einladungen für automatischen Versand erstellen", isDone = true},
-        new TestProcess { name = "Ort reservieren", tasks = "Reservieren des ORtes für den entsprechenden Zeitraum", isDone = false},
-        new TestProcess { name = "Begleitpersonen erfassen", tasks = "versenden von E-Mails, um die Anzahl der Begleitpersonen zu erfahren", isDone = false}
+        new TestProcess { name = "Einladungen vorbereiten", tasks = "Automatischer Versandt von E-Mail Einladungen", isDone = true},
+        new TestProcess { name = "Anmeldeschluss", tasks = "Aktiviert den Anmeldeschluss zu einem Zeitpunkt (Kann früher ausgelöst werden)", isDone = false},
+        new TestProcess { name = "Dankessagung", tasks = "versenden von Dankes-e-Mails", isDone = false}
     };
+
+    public void ExecuteProcess(TestProcess process)
+    {
+        //ausführng des Prozesses
+    }
 
     private void SaveEventChanges()
     {
