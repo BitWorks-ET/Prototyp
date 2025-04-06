@@ -25,6 +25,15 @@
 	Neuen Account erstellen
 </NavLink>
 
+@if (loginInProgress)
+{
+    <div class="d-flex">
+        <div class="spinner-border text-primary" role="status">
+        </div>
+        <span>Anmeldung im Gange, bitte warten...</span>
+    </div>
+}
+
 @if (popupVisible)
 {
     <div class="popup-overlay bg-danger bg-opacity-10">
@@ -43,18 +52,23 @@
 
     private bool popupVisible = false;
     private String popupMessage = "";
+    private bool loginInProgress = false;
 
 
     private async Task tryToLogin()
     {
         if (validateData())
         {
+            loginInProgress = true;
+            StateHasChanged();
+            await Task.Delay(200);
             if (await LoginHelper.LogInUser(eMail, password, SessionStorage))
             {
                 Navigation.NavigateTo("/");
             }
             else
             {
+                loginInProgress = false;
                 popupMessage = "Das Passwort ist falsch.";
                 popupVisible = true;
             }

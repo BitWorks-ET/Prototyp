@@ -1,4 +1,7 @@
 ﻿@inherits LayoutComponentBase
+
+@inject NavigationManager Navigation
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -6,7 +9,14 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            @if (UserOnLoginOrRegister())
+            {
+                <button onclick="LogOffUser" disabled>Abmelden</button>
+            }
+            else
+            {
+                <button onclick="LogOffUser">Abmelden</button>
+            }
         </div>
 
         <article class="content px-4">
@@ -14,3 +24,24 @@
         </article>
     </main>
 </div>
+@code {
+    public void LogOffUser()
+    {
+        //hier bitte den User abmelden -> weiterleiten auf Home denk ich wo er dann automatisch zu Login kommt oder?
+        //oder button sonst halt verschieben
+        Navigation.NavigateTo("/");
+    }
+
+    public bool UserOnLoginOrRegister()
+    {
+        string userPath = new Uri(Navigation.Uri).AbsolutePath;
+        if(userPath == "/Login" || userPath == "/Register")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}

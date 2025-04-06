@@ -11,6 +11,14 @@
 
 <h1>Willkommen, UserName!</h1>
 
+<div class="mb-3">
+    <label class="ms-3">
+        <input type="checkbox" @bind="userActive"/> Bereits Angemeldet
+    </label>
+    <label class="ms-3">
+        <input type="checkbox" @bind="eventOver" /> Event vorbei
+    </label>
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -20,7 +28,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var TestEvent in eventList)
+        @foreach (var TestEvent in GetFilteredEvents())
         {
             <tr>
                 <td><a href="@($"/Event/{TestEvent.name}")">@TestEvent.name</a></td>
@@ -34,7 +42,7 @@
 @if (userIsOrga)
 {
     <div class="d-flex">
-        <NavLink href="$/EventAdministration" class="btn btn-primary">
+        <NavLink href="/EventAdministration" class="btn btn-primary">
             Neues Event Erstellen
         </NavLink>
         <NavLink href="/manageOrganisation" class="btn btn-primary">
@@ -48,6 +56,8 @@
 
 @code{
     public bool userIsOrga = true;
+    public bool userActive;
+    public bool eventOver;
     public class TestEvent
     {
         public string name { get; set; }
@@ -56,10 +66,26 @@
 
     private List<TestEvent> eventList = new()
     {
-        new TestEvent { name = "Grillfest", date = new DateTime(2025, 5, 13)},
+        new TestEvent { name = "Grillfest", date = new DateTime(2024, 5, 13)},
         new TestEvent { name = "Important Meeting", date = new DateTime(2026, 5, 13)},
         new TestEvent { name = "Sommerfest", date = new DateTime(2025, 5, 14)}
     };
+
+    private IEnumerable<TestEvent> GetFilteredEvents()
+    {
+        if (!userActive && !eventOver)
+            return eventList;
+
+        return eventList.Where(e =>
+            (userActive && CurrentUserIsActive(e)) ||
+            (eventOver && (e.date <= DateTime.Today)));
+    }
+
+    private bool CurrentUserIsActive(TestEvent testEvent){
+        
+        //hier Logik die erkennt ib USer zum event angemeldet ist
+        return true;
+    }
 
     private bool isLoggedIn;
     private string? username;

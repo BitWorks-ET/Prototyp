@@ -1,4 +1,5 @@
 ﻿@page "/EventAdministration/{name}"
+@page "/EventAdministration"
 
 @inject NavigationManager Navigation
 
@@ -31,19 +32,53 @@
         <p class="fw-bold">Ort der Veranstaltung: </p>
     </div>
     <div class="p-2">
-        <InputText @bind-Value="@location" class="form-control" readonly />
+        <InputText @bind-Value="@location" class="form-control" />
     </div>
 </div>
 
 <h4>Informationen über das Event:</h4>
 <InputTextArea @bind-Value="eventInfos" class="form-control" />
 
-<div class="popup-overlay">
-    <div class="popup-box">
+<div class="d-flex">
+    <div class="p-2">
+        <button @onclick="SaveEventChanges">Prozessschritt hinzufügen</button> <!--was machen wir hier noch genau alles-->
+    </div>
+    <div class="p-2">
         <button @onclick="SaveEventChanges">Änderungen speichern</button>
     </div>
-    <div class="popup-box">
+    <div class="p-2">
         <button @onclick="DiscardEventChanges">Änderungen verwerfen</button>
+    </div>
+</div>
+<div>
+    <div>
+        <h3>Eventprozesse</h3>
+    </div>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Erledigt</th>
+                    <th>Prozessname</th>
+                    <th>Zu tun</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var TestProcess in processList)
+                {
+                    <tr>
+                        <td><input type="checkbox" @bind="TestProcess.isDone" /> Bereits Angemeldet</td>
+                        <td>@TestProcess.name</td>
+                        <td>@TestProcess.tasks</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <NavLink href="/processSuite">
+            Neuen Prozess hinzufügen
+        </NavLink>
     </div>
 </div>
 
@@ -55,6 +90,20 @@
     public DateTime eventTime;
     public string? location = "Immernoch da wo du nicht bist"; // alles eig von Person, aber copy nehmen dass die bearbeiten werden könne -> in methode speichern
 
+    public class TestProcess
+    {
+        public string? name;
+        public string? tasks;
+        public bool isDone;
+    }
+
+    private List<TestProcess> processList = new()
+    {
+        new TestProcess { name = "Einladungen vorbereiten", tasks = "Einladungen für automatischen Versand erstellen", isDone = true},
+        new TestProcess { name = "Ort reservieren", tasks = "Reservieren des ORtes für den entsprechenden Zeitraum", isDone = false},
+        new TestProcess { name = "Begleitpersonen erfassen", tasks = "versenden von E-Mails, um die Anzahl der Begleitpersonen zu erfahren", isDone = false}
+    };
+
     private void SaveEventChanges()
     {
         // hier aktualisieren der ganzen Variablen des Events
@@ -65,5 +114,18 @@
     {
         // hier aktualisieren der ganzen Variablen des Events
         Navigation.NavigateTo($"Event/{name}"); //zurück zum Event
+    }
+
+    protected override async Task OnInitializedAsync() //falls wir hier noch ne Unterscheidung machen müssen?
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            // Neues Event erstellen
+        }
+        else
+        {
+            // Event mit Name laden
+        }
+
     }
 }
