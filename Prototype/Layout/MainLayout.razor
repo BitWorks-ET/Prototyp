@@ -11,11 +11,11 @@
         <div class="top-row px-4">
             @if (UserOnLoginOrRegister())
             {
-                <button onclick="LogOffUser" disabled>Abmelden</button>
+                <button @onclick="LogOffUser" disabled>Abmelden</button>
             }
             else
             {
-                <button onclick="LogOffUser">Abmelden</button>
+                <button @onclick="LogOffUser">Abmelden</button>
             }
         </div>
 
@@ -27,9 +27,7 @@
 @code {
     public void LogOffUser()
     {
-        //hier bitte den User abmelden -> weiterleiten auf Home denk ich wo er dann automatisch zu Login kommt oder?
-        //oder button sonst halt verschieben
-        Navigation.NavigateTo("/");
+        Navigation.NavigateTo("/Login");
     }
 
     public bool UserOnLoginOrRegister()

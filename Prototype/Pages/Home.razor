@@ -11,7 +11,7 @@
 
 <PageTitle>Übersicht</PageTitle>
 
-<h1>Willkommen, UserName!</h1>
+<h1>Willkommen, @currentUser.FirstName!</h1>
 
 <div class="mb-3">
     <label class="ms-3">
@@ -60,7 +60,7 @@
 @code
 {
     private bool isLoggedIn;
-    private Person currentUser;
+    private Person currentUser = new Person("", "");
     private string rightsType;
     private Rights authority = new Member();
 
@@ -84,13 +84,13 @@
         rightsType = await SessionStorage.GetItemAsStringAsync("rightsType");
         if (rightsType == "Member")
         {
-	        authority = await SessionStorage.GetItemAsync<Member>("rights"); 
+            authority = await SessionStorage.GetItemAsync<Member>("rights"); 
         }
         else if (rightsType == "Organizer")
         {
             authority = await SessionStorage.GetItemAsync<Organizer>("rights");
         }
-        
+
 
         allEvents = Application.Instance.GetOrganization(currentUser.OrganizationId).Events;
     }
@@ -109,6 +109,7 @@
     private void userForTesting()
     {
         Person testUser = new Person("lol@lol", BCrypt.HashPassword("lol"));
+        testUser.FirstName = "Chrisi";
         Application.Instance.AddMember(testUser);
 
         Organization newOrg = new Organization("Test", testUser);

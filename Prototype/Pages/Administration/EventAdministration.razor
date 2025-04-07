@@ -117,11 +117,11 @@
         rightsType = await SessionStorage.GetItemAsStringAsync("rightsType");
         if (rightsType == "Member")
         {
-	        authority = await SessionStorage.GetItemAsync<Member>("rights"); 
+            authority = await SessionStorage.GetItemAsync<Member>("rights"); 
         }
         else if (rightsType == "Organizer")
         {
-	        authority = await SessionStorage.GetItemAsync<Organizer>("rights");
+            authority = await SessionStorage.GetItemAsync<Organizer>("rights");
         }
 
 
@@ -146,6 +146,7 @@
         {
             Application.Instance.AddEvent(currentEvent);
             currentOrg.Events.Add(currentEvent);
+            eventId = $"{currentEvent.Id}";
         }
         else
         {

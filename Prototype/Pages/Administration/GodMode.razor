@@ -1,5 +1,24 @@
-﻿<h3>GodMode</h3>
+﻿@page "/godMode"
+@using BCrypt.Net
+@using Prototype.Models
+
+<h3>GodMode</h3>
+
+<label for="userName">Organisationsname:</label>
+<InputText @bind-Value="orgName" placeholder="" class="form-control" />
+
+<label for="userName">Domain:</label>
+<InputText @bind-Value="orgDomain" placeholder="" class="form-control" />
 
 @code {
+	private string orgName;
+	private string orgDomain;
 
+	protected override async Task OnInitializedAsync()
+	{
+		if (Application.Instance.GetPerson("admin@admin") == null)
+		{
+			Person newPerson = new Person("admin@admin", BCrypt.HashPassword("admin"));
+		}
+	}
 }

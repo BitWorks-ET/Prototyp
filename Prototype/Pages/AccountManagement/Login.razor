@@ -53,6 +53,11 @@
     private String popupMessage = "";
     private bool loginInProgress = false;
 
+    protected override async Task OnInitializedAsync()
+    {
+	    SessionStorage.ClearAsync();
+    }
+
 
     private async Task tryToLogin()
     {

@@ -12,10 +12,10 @@
 <h3>Registrieren</h3>
 <p>Hier können Sie einen neuen Account erstellen, indem Sie die relevanten Informationen eingeben.</p>
 
-<label for="userName">Vorname:</label>
+<label for="firstname">Vorname:</label>
 <InputText @bind-Value="firstname" placeholder="Max" class="form-control" />
 
-<label for="userName">Nachname:</label>
+<label for="lastname">Nachname:</label>
 <InputText @bind-Value="lastname" placeholder="Mustermann" class="form-control" />
 
 <label for="eMail">E-Mail Adresse:</label>
@@ -69,6 +69,12 @@
 	private bool registerInProgress = false;
 
 
+	protected override async Task OnInitializedAsync()
+	{
+		SessionStorage.ClearAsync();
+	}
+
+
 	private async Task tryToRegister()
 	{
 		if (validateData())
@@ -97,12 +103,14 @@
 		newPerson.Birthday = birthday;
 		newPerson.Gender = gender;
 
+		string eMailDomain = eMail.Split('@')[1];
 		foreach (Organization organization in Application.Instance.GetOrganizations())
 		{
-			if (eMail.Split('@')[1] == organization.Domain)
+			if (eMailDomain == organization.Domain)
 			{
 				organization.OrgMembers.Add(newPerson);
 				newPerson.OrganizationId = organization.Id;
+				break;
 			}
 		}
 
