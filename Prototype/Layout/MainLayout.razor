@@ -1,45 +1,56 @@
-﻿@inherits LayoutComponentBase
-
+﻿@using Blazored.SessionStorage
+@inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject ISessionStorageService SessionStorage
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <main>
-        <div class="top-row px-4">
-            @if (UserOnLoginOrRegister())
-            {
-                <button @onclick="LogOffUser" disabled>Abmelden</button>
-            }
-            else
-            {
-                <button @onclick="LogOffUser">Abmelden</button>
-            }
-        </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+<link href="css/MainLayout.css" rel="stylesheet" />
+
+<div>
+	
+	<!--Menüleiste-->
+	<div>
+		<nav>
+
+			<!--Home Button-->
+			<div>
+				<NavLink href="" Match="NavLinkMatch.All">
+					Home
+				</NavLink>
+			</div>
+
+			<!--Abmelden Button-->
+			@if (isLoggedIn)
+			{
+				<div>
+					<NavLink href="/Login">
+						Abmelden
+					</NavLink>
+				</div>
+			}
+		</nav>
+	</div>
+	
+	<!--Main Page-->
+	<main>
+		<article>
+			@Body
+		</article>
+	</main>
 </div>
-@code {
-    public void LogOffUser()
-    {
-        Navigation.NavigateTo("/Login");
-    }
 
-    public bool UserOnLoginOrRegister()
-    {
-        string userPath = new Uri(Navigation.Uri).AbsolutePath;
-        if(userPath == "/Login" || userPath == "/Register")
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+
+
+@code {
+	private bool isLoggedIn = false;
+
+
+	// Dies wird aufgerufen, wenn sich die URL ändert und die Seite gerendert werden muss
+	// Brauchen wir, damit der AbmeldeButton erscheint
+	protected override async Task OnParametersSetAsync()
+	{
+		isLoggedIn = await SessionStorage.GetItemAsync<bool>("isLoggedIn");
+		StateHasChanged();
+	}
 }

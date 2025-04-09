@@ -11,5 +11,7 @@ public abstract class Rights
     public bool DeleteOrganízation { get; set; } = true;
     public bool ManageOrganízation { get; set; } = true;
 
-
+    public bool CreateProcess { get; set; } = true;
+    public bool DeleteProcess { get; set; } = true;
+    public bool ManageProcess { get; set; } = true;
 }

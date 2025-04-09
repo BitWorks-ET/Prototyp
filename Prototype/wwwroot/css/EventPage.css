@@ -1,0 +1,94 @@
+﻿/* Basislayout */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f9fafb;
+    margin: 0;
+    padding: 1.5rem;
+    color: #333;
+}
+
+/* Überschrift */
+h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #222;
+}
+
+/* Eventinformationen */
+div > div > p:first-child {
+    font-weight: bold;
+    margin-top: 1rem;
+    margin-bottom: 0.2rem;
+    color: #444;
+}
+
+div > div > p + p {
+    margin-bottom: 1rem;
+    color: #555;
+}
+
+/* An-/Abmeldebuttons */
+button {
+    margin-right: 1rem;
+    margin-top: 1.5rem;
+    padding: 0.6rem 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    button:first-of-type {
+        background-color: #28a745;
+        color: white;
+    }
+
+        button:first-of-type:hover {
+            background-color: #218838;
+        }
+
+    button:last-of-type {
+        background-color: #dc3545;
+        color: white;
+    }
+
+        button:last-of-type:hover {
+            background-color: #c82333;
+        }
+
+/* Organisatoren-Suite */
+@if (authority is Organizer || authority is EventOwner) div {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #eef6ff;
+    border: 1px solid #b6d4fe;
+    border-radius: 8px;
+}
+
+/* Links in der Suite */
+NavLink {
+    display: inline-block;
+    margin-right: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+    NavLink:hover {
+        background-color: #0056b3;
+    }
+
+/* Löschen-Button in Suite */
+@if (authority.DeleteEvent) button {
+    margin-top: 1rem;
+    background-color: #dc3545;
+}
+
+@if (authority.DeleteEvent) button:hover {
+    background-color: #c82333;
+}

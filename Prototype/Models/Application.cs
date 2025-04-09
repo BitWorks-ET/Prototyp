@@ -16,6 +16,16 @@ public class Application
         this._organizations = new List<Organization>();
         this._members = new List<Person>();
         this._events = new List<Event>();
+
+        Person admin = new Person("admin@admin", BCrypt.Net.BCrypt.HashPassword("admin"));
+        admin.FirstName = "Admin";
+        admin.LastName = "Admin";
+
+        Organization adminOrg = new Organization("admin", admin);
+        admin.OrganizationId = adminOrg.Id;
+
+        this._members.Add(admin);
+        this._organizations.Add(adminOrg);
     }
 
     public static Application Instance => _instance.Value;

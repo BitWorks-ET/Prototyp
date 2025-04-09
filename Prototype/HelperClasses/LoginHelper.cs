@@ -26,7 +26,7 @@ namespace Prototype.HelperClasses
                         await sessionStorage.SetItemAsync("rightsType", "Member");
                         await sessionStorage.SetItemAsync("rights", new Member());
                     }
-                    
+
                     return true;
                 }
             }

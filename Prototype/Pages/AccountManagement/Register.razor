@@ -8,10 +8,15 @@
 @inject ISessionStorageService SessionStorage
 
 
+
+<link href="css/Register.css" rel="stylesheet" />
+
 <PageTitle>Registrierung</PageTitle>
 <h3>Registrieren</h3>
 <p>Hier können Sie einen neuen Account erstellen, indem Sie die relevanten Informationen eingeben.</p>
 
+
+<!--Alle Felder, die der Benutzer zum Regestrieren ausfüllen muss-->
 <label for="firstname">Vorname:</label>
 <InputText @bind-Value="firstname" placeholder="Max" class="form-control" />
 
@@ -30,8 +35,22 @@
 <label for="repeatPassword">Passwort wiederholen:</label>
 <InputText id="repeatPassword" type="password" @bind-Value="repeatedPassword" class="form-control" />
 
+
+<!--Der Registrieren Button-->
 <button @onclick="tryToRegister">Registrieren</button>
 
+<!--Der Hinweis, dass ein Feld falsch ausgefüllt wurde oder leer ist-->
+@if (popupVisible)
+{
+	<div>
+		<div>
+			<p>@popupMessage</p>
+			<button @onclick="() => popupVisible = false">Schließen</button>
+		</div>
+	</div>
+}
+
+<!--Der Ladekreis, der beim Laden der mainPage läuft-->
 @if (registerInProgress)
 {
 	<div class="d-flex">
@@ -42,22 +61,13 @@
 	</div>
 }
 
-@if (popupVisible)
-{
-	<div class="popup-overlay bg-danger bg-opacity-10">
-		<div class="popup-box">
-			<p>@popupMessage</p>
-			<button @onclick="() => popupVisible = false">Schließen</button>
-		</div>
-	</div>
-}
 
 
 
 @code {
 	private string? firstname;
 	private string? lastname;
-	private Gender? gender; //Dropdown hinzufügen
+	private Gender? gender; // TODO: Dropdown hinzufügen
 	private DateTime? birthday;
 
 	private string? eMail;
@@ -69,22 +79,33 @@
 	private bool registerInProgress = false;
 
 
+	// Alle eventuell gespeicherten Anmeldedaten werden gelöscht.
+	// Der User wird ausgeloggt
 	protected override async Task OnInitializedAsync()
 	{
 		SessionStorage.ClearAsync();
 	}
 
 
+	// Wird ausgeführt wenn der Nutzer auf registriren klickt.
+	// Erstellt einen neuen Nutzeraccount
+	// Fügt den Account der richtigen Organisaton hinzu (Anhand der Domain)
+
+	// TODO: Wenn es keine Orga gibt?
+
+	// Man wird auf die Mainpage weitergeleitet
 	private async Task tryToRegister()
 	{
 		if (validateData())
 		{
+			// Ladekreis
 			registerInProgress = true;
 			StateHasChanged();
 			await Task.Delay(200);
+
+			// Account anlegen und anmelden
 			createAccount();
 			await LoginHelper.LogInUser(eMail, password, SessionStorage);
-
 			Navigation.NavigateTo("/");
 		}
 		else
@@ -94,6 +115,8 @@
 	}
 
 
+	// Hilfsfunktion von tryToRegister
+	// Erstellt Account und fügt ihn einer Organisation hinzu
 	private void createAccount()
 	{
 		Person newPerson = new Person(eMail, BCrypt.HashPassword(password));
@@ -103,6 +126,7 @@
 		newPerson.Birthday = birthday;
 		newPerson.Gender = gender;
 
+		// Neuen Account einer Organisation zuweisen
 		string eMailDomain = eMail.Split('@')[1];
 		foreach (Organization organization in Application.Instance.GetOrganizations())
 		{
@@ -118,6 +142,8 @@
 	}
 
 
+	// Hilfsfunktion von tryToRegister
+	// Eingabevalidierung
 	private bool validateData()
 	{
 		if (firstname == null)
