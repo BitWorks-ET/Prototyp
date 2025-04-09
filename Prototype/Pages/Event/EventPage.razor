@@ -18,7 +18,7 @@
 </div>
 
 <!--Alle wichtigen Informationen über das Event-->
-<div>
+<div class="event-info-section">
 	<div>
 		<p>Informationen über das Event: </p>
 		<p>@currentEvent.Description</p>
@@ -42,14 +42,20 @@
 
 <!--An/Ab- meldebutten für das Event-->
 <div>
-	<button @onclick="EventSubscribe">Anmelden</button>
-	<button @onclick="EventUnsubscribe">Abmelden</button>
+	@if (userSubscribed)
+	{
+		<button class="unsubscribe" @onclick="EventUnsubscribe">Abmelden</button>
+	}
+	else
+	{
+		<button class="subscribe" @onclick="EventSubscribe">Anmelden</button>
+	}
 </div>
 
 <!--Suite für Organisatoren-->
 @if (authority is Organizer || authority is EventOwner)
 {
-	<div>
+	<div class="organizer-suite">
 		<!--Weiterleitung zum bearbeiten des Events-->
 		@if (authority.ManageEvent)
 		{

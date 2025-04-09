@@ -20,10 +20,10 @@
 
     <!--Checkboxen für die Filter der Eventliste-->
     <div>
-        <label>
+        <label class="filter-label">
             <input type="checkbox" @bind="userSignedInToEvent"/> Bereits Angemeldet
         </label>
-        <label>
+        <label class="filter-label">
             <input type="checkbox" @bind="eventInThePast"/> Event vorbei
         </label>
     </div>
@@ -55,7 +55,7 @@
 <!--Suite für Organisatoren-->
 @if (authority is Organizer)
 {
-    <div>
+    <div class="organizer-suite">
         <!--Neues Event erstellen-->
         @if (authority.CreateEvent)
         {
@@ -102,12 +102,12 @@
         }
         currentUser = await SessionStorage.GetItemAsync<Person>("user");
 
-        string rightsType = await SessionStorage.GetItemAsStringAsync("rightsType");
-        if (rightsType == "Member")
+        string rightsType = (await SessionStorage.GetItemAsStringAsync("rightsType")).Trim();
+        if (string.Equals(rightsType, "\"Member\""))
         {
-            authority = await SessionStorage.GetItemAsync<Member>("rights"); 
+            authority = await SessionStorage.GetItemAsync<Member>("rights");
         }
-        else if (rightsType == "Organizer")
+        else if (string.Equals(rightsType, "\"Organizer\""))
         {
             authority = await SessionStorage.GetItemAsync<Organizer>("rights");
         }

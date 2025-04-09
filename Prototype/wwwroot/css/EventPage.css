@@ -15,14 +15,14 @@ h3 {
 }
 
 /* Eventinformationen */
-div > div > p:first-child {
+.event-info-section p:first-child {
     font-weight: bold;
     margin-top: 1rem;
     margin-bottom: 0.2rem;
     color: #444;
 }
 
-div > div > p + p {
+.event-info-section p + p {
     margin-bottom: 1rem;
     color: #555;
 }
@@ -39,26 +39,26 @@ button {
     transition: background-color 0.3s ease;
 }
 
-    button:first-of-type {
+    button.subscribe {
         background-color: #28a745;
         color: white;
     }
 
-        button:first-of-type:hover {
+        button.subscribe:hover {
             background-color: #218838;
         }
 
-    button:last-of-type {
+    button.unsubscribe {
         background-color: #dc3545;
         color: white;
     }
 
-        button:last-of-type:hover {
+        button.unsubscribe:hover {
             background-color: #c82333;
         }
 
 /* Organisatoren-Suite */
-@if (authority is Organizer || authority is EventOwner) div {
+.organizer-suite {
     margin-top: 2rem;
     padding: 1rem;
     background-color: #eef6ff;
@@ -66,29 +66,30 @@ button {
     border-radius: 8px;
 }
 
-/* Links in der Suite */
-NavLink {
-    display: inline-block;
-    margin-right: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
-
-    NavLink:hover {
-        background-color: #0056b3;
+    /* Links in der Suite */
+    .organizer-suite a {
+        display: inline-block;
+        margin-right: 1rem;
+        padding: 0.5rem 1rem;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
     }
 
-/* Löschen-Button in Suite */
-@if (authority.DeleteEvent) button {
-    margin-top: 1rem;
-    background-color: #dc3545;
-}
+        .organizer-suite a:hover {
+            background-color: #0056b3;
+        }
 
-@if (authority.DeleteEvent) button:hover {
-    background-color: #c82333;
-}
+    /* Löschen-Button */
+    .organizer-suite button.delete {
+        margin-top: 1rem;
+        background-color: #dc3545;
+        color: white;
+    }
+
+        .organizer-suite button.delete:hover {
+            background-color: #c82333;
+        }
